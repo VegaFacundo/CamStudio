@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows</TargetFramework>
+
+		<AssemblyName>CamStudio</AssemblyName>
+		<RootNamespace>CamStudio</RootNamespace>
+
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+
+		<PlatformTarget>x64</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>AnyCPU;x64</Platforms>
+	</PropertyGroup>
+
+ 
+	
+	<ItemGroup>
+		<ApplicationDefinition Include="src\App.xaml" /> 
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FFmpeg.AutoGen.Abstractions" Version="9.0.1.1" />
+
+		<PackageReference Include="FFmpeg.AutoGen.Bindings.DynamicallyLoaded" Version="9.0.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="ffmpeg\bin\*.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)'=='Debug'">
+		<None Include="Native\windows\win10\dist\Debug\CamStudioVirtualCamera.dll" Link="CamStudioVirtualCamera.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)'=='Release'">
+		<None Include="Native\windows\win10\dist\Release\CamStudioVirtualCamera.dll" Link="CamStudioVirtualCamera.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+</Project>
