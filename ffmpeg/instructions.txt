@@ -1,0 +1,13 @@
+FFmpeg Runtime Setup 1. Download the latest FFmpeg shared build from: 
+https://www.gyan.dev/ffmpeg/builds/ 
+Recommended package: ffmpeg-release-full-shared.7z 2. 
+Extract the archive. 3. 
+Copy all DLL files from: ffmpeg/bin/ into this folder: 
+CamStudioDesktop/ffmpeg/bin/ 
+Expected files include (names may vary by version): 
+- avcodec-61.dll 
+- avformat-61.dll 
+- avutil-59.dll 
+- swscale-8.dll 
+- swresample-5.dll 4. 
+Rebuild and run the project.

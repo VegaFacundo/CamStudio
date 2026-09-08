@@ -63,3 +63,9 @@ TestResults/
 # FFmpeg temporales
 ############################
 ffmpeg*.log
+
+############################
+# FFmpeg
+############################
+CamStudio/ffmpeg/bin/*
+!CamStudio/ffmpeg/instructions.txt
