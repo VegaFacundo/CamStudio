@@ -16,28 +16,32 @@
 		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
- 
-	
 	<ItemGroup>
-		<ApplicationDefinition Include="src\App.xaml" /> 
+		<ApplicationDefinition Include="src\App.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FFmpeg.AutoGen.Abstractions" Version="9.0.1.1" />
-
 		<PackageReference Include="FFmpeg.AutoGen.Bindings.DynamicallyLoaded" Version="9.0.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="ffmpeg\bin\*.dll" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="ffmpeg\bin\*.dll"
+			  CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(Configuration)'=='Debug'">
-		<None Include="Native\windows\win10\dist\Debug\CamStudioVirtualCamera.dll" Link="CamStudioVirtualCamera.dll" CopyToOutputDirectory="PreserveNewest" />
+	<!-- Win10 -->
+	<ItemGroup>
+		<None Include="Native\windows\win10\dist\$(Configuration)\CamStudioVirtualCamera.dll"
+			  Link="CamStudioVirtualCamera.dll"
+			  CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(Configuration)'=='Release'">
-		<None Include="Native\windows\win10\dist\Release\CamStudioVirtualCamera.dll" Link="CamStudioVirtualCamera.dll" CopyToOutputDirectory="PreserveNewest" />
+	<!-- Win11 -->
+	<ItemGroup>
+		<None Include="Native\windows\win11\CamStudioVirtualCameraW11\x64\$(Configuration)\CamStudioVirtualCameraW11.dll"
+			  Link="CamStudioVirtualCameraW11.dll"
+			  CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 </Project>

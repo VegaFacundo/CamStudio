@@ -2,8 +2,11 @@
   <Configurations>
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
+    <Platform Name="x86" />
   </Configurations>
   <Project Path="CamStudio.csproj">
     <Platform Solution="*|x64" Project="x64" />
+    <Build Solution="*|x86" Project="false" />
   </Project>
+  <Project Path="Native/windows/win11/CamStudioVirtualCameraW11/CamStudioVirtualCameraW11.vcxproj" Id="51954005-7661-4aec-a31b-21dda9bdce90" />
 </Solution>

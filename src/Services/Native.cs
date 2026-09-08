@@ -1,40 +1,97 @@
 using System.Runtime.InteropServices;
 
-
-
 namespace CamStudio.Services;
 
 internal static class Native
 {
-    private const string DllName =
-        "CamStudioVirtualCamera.dll";
+    private static IntPtr _library;
 
-    [DllImport(
-        DllName,
-        CallingConvention = CallingConvention.Cdecl
-    )]
+    private static bool _initialized;
+
+    private static string GetDllName()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            var version = Environment.OSVersion.Version;
+
+            if (version.Build >= 22000)
+                return "CamStudioVirtualCameraW11.dll";
+
+            return "CamStudioVirtualCamera.dll";
+        }
+
+        if (OperatingSystem.IsLinux())
+        {
+            return "libCamStudioVirtualCamera.so";
+        }
+
+        throw new PlatformNotSupportedException(
+            $"Sistema operativo no soportado: {RuntimeInformation.OSDescription}"
+        );
+    }
+
+    private static void LoadLibrary()
+    {
+        if (_library != IntPtr.Zero)
+            return;
+
+        var dllName = GetDllName();
+
+        _library = NativeLibrary.Load(dllName);
+    }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static extern bool CamStudioInitialize(
+    private delegate bool CamStudioInitializeDelegate(
         int width,
         int height,
         int fps
     );
 
-    [DllImport(
-        DllName,
-        CallingConvention = CallingConvention.Cdecl
-    )]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
-    private static extern bool CamStudioWriteFrame(
-        byte[] data,
+    private delegate bool CamStudioWriteFrameDelegate(
+        IntPtr data,
         int size
     );
 
-    [DllImport(
-        DllName,
-        CallingConvention = CallingConvention.Cdecl
-    )]
-    private static extern void CamStudioShutdown();
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void CamStudioShutdownDelegate();
+
+    private static CamStudioInitializeDelegate? _initialize;
+
+    private static CamStudioWriteFrameDelegate? _writeFrame;
+
+    private static CamStudioShutdownDelegate? _shutdown;
+
+    private static void LoadFunctions()
+    {
+        LoadLibrary();
+
+        _initialize =
+            Marshal.GetDelegateForFunctionPointer<CamStudioInitializeDelegate>(
+                NativeLibrary.GetExport(
+                    _library,
+                    "CamStudioInitialize"
+                )
+            );
+
+        _writeFrame =
+            Marshal.GetDelegateForFunctionPointer<CamStudioWriteFrameDelegate>(
+                NativeLibrary.GetExport(
+                    _library,
+                    "CamStudioWriteFrame"
+                )
+            );
+
+        _shutdown =
+            Marshal.GetDelegateForFunctionPointer<CamStudioShutdownDelegate>(
+                NativeLibrary.GetExport(
+                    _library,
+                    "CamStudioShutdown"
+                )
+            );
+    }
 
     public static bool Initialize(
         int width,
@@ -42,7 +99,9 @@ internal static class Native
         int fps
     )
     {
-        return CamStudioInitialize(
+        LoadFunctions();
+
+        return _initialize!(
             width,
             height,
             fps
@@ -53,14 +112,45 @@ internal static class Native
         byte[] data
     )
     {
-        return CamStudioWriteFrame(
-            data,
-            data.Length
-        );
+        if (_writeFrame == null)
+            throw new InvalidOperationException(
+                "Native library not initialized."
+            );
+
+        var handle =
+            GCHandle.Alloc(
+                data,
+                GCHandleType.Pinned
+            );
+
+        try
+        {
+            return _writeFrame!(
+                handle.AddrOfPinnedObject(),
+                data.Length
+            );
+        }
+        finally
+        {
+            handle.Free();
+        }
     }
 
     public static void Shutdown()
     {
-        CamStudioShutdown();
+        if (_shutdown != null)
+        {
+            _shutdown();
+        }
+
+        _initialize = null;
+        _writeFrame = null;
+        _shutdown = null;
+
+        if (_library != IntPtr.Zero)
+        {
+            NativeLibrary.Free(_library);
+            _library = IntPtr.Zero;
+        }
     }
 }
