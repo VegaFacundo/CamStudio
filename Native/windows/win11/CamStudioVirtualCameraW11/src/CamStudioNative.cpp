@@ -4,11 +4,16 @@
 
 #include <cstdio>
 #include <cstddef>
+#include "CamStudioNative.h"
+#include "CamStudioSharedMemory.h"
+#include "WindowsVirtualCamera.h"
 
 static CamStudioSharedMemory* g_sharedMemory = nullptr;
+static WindowsVirtualCamera* g_virtualCamera = nullptr;
 
 static void DebugLog(const char* text)
 {
+    return;
     FILE* file = nullptr;
 
     fopen_s(
@@ -68,6 +73,42 @@ extern "C"
 
         DebugLog("SHARED MEMORY CREATED");
 
+        printf(">>> Shared memory initialized\n");
+        fflush(stdout);
+
+        g_virtualCamera = new WindowsVirtualCamera();
+
+        if (g_virtualCamera == nullptr)
+        {
+            printf(">>> ERROR: Could not create WindowsVirtualCamera\n");
+            fflush(stdout);
+
+            delete g_sharedMemory;
+            g_sharedMemory = nullptr;
+
+            return false;
+        }
+
+        printf(">>> Calling WindowsVirtualCamera::Initialize\n");
+        fflush(stdout);
+
+        if (!g_virtualCamera->Initialize(width, height, fps))
+        {
+            printf(">>> ERROR: WindowsVirtualCamera::Initialize FAILED\n");
+            fflush(stdout);
+
+            delete g_virtualCamera;
+            g_virtualCamera = nullptr;
+
+            delete g_sharedMemory;
+            g_sharedMemory = nullptr;
+
+            return false;
+        }
+
+        printf(">>> Windows Virtual Camera initialized successfully!\n");
+        fflush(stdout);
+
         return true;
     }
 
@@ -100,6 +141,14 @@ extern "C"
     CAMSTUDIO_API void CamStudioShutdown()
     {
         DebugLog("CamStudioShutdown");
+
+        if (g_virtualCamera != nullptr)
+        {
+            g_virtualCamera->Shutdown();
+
+            delete g_virtualCamera;
+            g_virtualCamera = nullptr;
+        }
 
         delete g_sharedMemory;
         g_sharedMemory = nullptr;

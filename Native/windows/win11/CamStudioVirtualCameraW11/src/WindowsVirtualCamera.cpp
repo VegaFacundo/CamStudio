@@ -3,6 +3,15 @@
 
 #include <mfapi.h>
 #include <mfvirtualcamera.h>
+#include <windows.h>
+#include <cstdio>
+#include <iostream>
+
+static void DebugLog(const char* text)
+{
+    OutputDebugStringA(text);
+    OutputDebugStringA("\n");
+}
 
 WindowsVirtualCamera::WindowsVirtualCamera()
     : m_virtualCamera(nullptr),
@@ -17,16 +26,14 @@ WindowsVirtualCamera::~WindowsVirtualCamera()
     Shutdown();
 }
 
-bool WindowsVirtualCamera::Initialize(
-    int width,
-    int height,
-    int fps
-)
+bool WindowsVirtualCamera::Initialize(int width, int height, int fps)
 {
-    if (width <= 0 ||
-        height <= 0 ||
-        fps <= 0)
+    printf("\n=== WindowsVirtualCamera::Initialize ===\n");
+    printf("Resolution: %dx%d @ %d FPS\n", width, height, fps);
+
+    if (width <= 0 || height <= 0 || fps <= 0)
     {
+        printf("ERROR: invalid parameters\n");
         return false;
     }
 
@@ -34,14 +41,19 @@ bool WindowsVirtualCamera::Initialize(
     m_height = height;
     m_fps = fps;
 
-    HRESULT hr = MFStartup(
-        MF_VERSION
-    );
+    printf("Calling MFStartup...\n");
+
+    HRESULT hr = MFStartup(MF_VERSION);
+
+    printf("MFStartup -> 0x%08X\n", (unsigned int)hr);
 
     if (FAILED(hr))
     {
+        printf("ERROR: MFStartup failed\n");
         return false;
     }
+
+    printf("Calling MFCreateVirtualCamera...\n");
 
     hr = MFCreateVirtualCamera(
         MFVirtualCameraType_SoftwareCameraSource,
@@ -54,16 +66,50 @@ bool WindowsVirtualCamera::Initialize(
         &m_virtualCamera
     );
 
+    printf("MFCreateVirtualCamera -> 0x%08X\n", (unsigned int)hr);
+
     if (FAILED(hr))
     {
+        printf("ERROR: MFCreateVirtualCamera failed\n");
+
         MFShutdown();
         return false;
     }
 
+    printf("Virtual camera object created!\n");
+
+    printf("Calling IMFVirtualCamera::Start...\n");
+
     hr = m_virtualCamera->Start(nullptr);
+
+    printf("Start -> 0x%08X\n", (unsigned int)hr);
 
     if (FAILED(hr))
     {
+        DWORD error = HRESULT_CODE(hr);
+
+        LPSTR message = nullptr;
+
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            nullptr,
+            error,
+            0,
+            (LPSTR)&message,
+            0,
+            nullptr
+        );
+
+        if (message != nullptr)
+        {
+            printf("Windows error: %s\n", message);
+            LocalFree(message);
+        }
+
+        printf("ERROR: Start failed\n");
+
         m_virtualCamera->Release();
         m_virtualCamera = nullptr;
 
@@ -71,6 +117,8 @@ bool WindowsVirtualCamera::Initialize(
 
         return false;
     }
+
+    printf("VIRTUAL CAMERA STARTED!\n");
 
     return true;
 }

@@ -16,10 +16,6 @@ public unsafe class H264Decoder : IDisposable
     private int _width;
     private int _height;
 
-    private byte[]? _codecConfig;
-
-    private bool _decoderHasKeyFrame;
-
     public H264Decoder()
     {
         _codec = ffmpeg.avcodec_find_decoder(
@@ -74,18 +70,14 @@ public unsafe class H264Decoder : IDisposable
     {
         if (h264Data.Length == 0)
             return;
-        System.Diagnostics.Debug.WriteLine(
-    $"--- PACKET size={h264Data.Length} flags={flags} ---"
-);
+        
 
         PrintNalTypes(h264Data);
         string hash = Convert.ToHexString(
     SHA256.HashData(h264Data)
 );
 
-        System.Diagnostics.Debug.WriteLine(
-            $"PACKET size={h264Data.Length} flags={flags} hash={hash}"
-        );
+        
         SendPacket(
             h264Data,
             pts,
@@ -125,10 +117,6 @@ public unsafe class H264Decoder : IDisposable
                 int nalType =
                     data[i + startCodeLength] & 0x1F;
 
-                System.Diagnostics.Debug.WriteLine(
-                    $"NAL type={nalType} offset={i}"
-                );
-
                 i += startCodeLength - 1;
             }
         }
@@ -152,9 +140,7 @@ public unsafe class H264Decoder : IDisposable
 
         if (result < 0)
         {
-            Console.WriteLine(
-                $"av_new_packet error: {result}"
-            );
+
             return;
         }
 
@@ -168,9 +154,6 @@ public unsafe class H264Decoder : IDisposable
         _packet->pts = ffmpeg.AV_NOPTS_VALUE;
         _packet->dts = ffmpeg.AV_NOPTS_VALUE;
 
-        Console.WriteLine(
-            $"SEND size={data.Length} flags={flags}"
-        );
 
         result = ffmpeg.avcodec_send_packet(
             _codecContext,
@@ -179,9 +162,7 @@ public unsafe class H264Decoder : IDisposable
 
         if (result < 0)
         {
-            Console.WriteLine(
-                $"avcodec_send_packet error: {result}"
-            );
+          
             return;
         }
 
@@ -365,7 +346,5 @@ public unsafe class H264Decoder : IDisposable
         }
 
         _codec = null;
-        _codecConfig = null;
-        _decoderHasKeyFrame = false;
     }
 }

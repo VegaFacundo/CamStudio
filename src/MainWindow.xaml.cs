@@ -4,6 +4,7 @@ using CamStudio.Models;
 using CamStudio.Services;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CamStudio.src.Services.CameraRegistration;
 
 namespace CamStudio;
 
@@ -16,10 +17,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        NativeCameraRegistration.EnsureRegistered();
 
         FFmpegService.Initialize();
 
         _model = new ConnectionModel();
+
 
         _connectionController =
             new ConnectionController(_model);
@@ -99,7 +102,6 @@ public partial class MainWindow : Window
             }
         });
     }
-    private long _frameCounter;
 
     private void OnVideoFrameReceived(
             byte[] frame,

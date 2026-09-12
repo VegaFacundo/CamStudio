@@ -25,10 +25,16 @@
 		<PackageReference Include="FFmpeg.AutoGen.Bindings.DynamicallyLoaded" Version="9.0.1.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="ffmpeg\bin\*.dll"
-			  CopyToOutputDirectory="PreserveNewest" />
+	<ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+		<None Include="ffmpeg\windows\arch-x64\bin\*.dll"
+			  CopyToOutputDirectory="PreserveNewest" 
+			  />
 	</ItemGroup>
+
+	<!--<ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+		<None Include="ffmpeg\linux\arch-x64\lib\*.so*"
+			  CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup> -->
 
 	<!-- Win10 -->
 	<ItemGroup>

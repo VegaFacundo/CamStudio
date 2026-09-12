@@ -7,6 +7,7 @@
 #include <mfidl.h>
 #include <mfobjects.h>
 #include <mferror.h>
+#include <cstdio>
 
 VirtualCameraMediaSource::VirtualCameraMediaSource()
     : m_refCount(1),
@@ -93,6 +94,8 @@ HRESULT
 VirtualCameraMediaSource::Initialize(
     IMFAttributes* attributes)
 {
+    printf("VirtualCameraMediaSource::Initialize called!\n");
+    OutputDebugStringA("VirtualCameraMediaSource::Initialize ENTER\n");
     if (m_initialized)
         return MF_E_ALREADY_INITIALIZED;
 

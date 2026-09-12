@@ -6,8 +6,6 @@ internal static class Native
 {
     private static IntPtr _library;
 
-    private static bool _initialized;
-
     private static string GetDllName()
     {
         if (OperatingSystem.IsWindows())

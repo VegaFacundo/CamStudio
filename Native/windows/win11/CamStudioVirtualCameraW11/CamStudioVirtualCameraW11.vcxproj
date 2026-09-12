@@ -141,13 +141,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\framework.h" />
-    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\CamStudioGuids.h" />
     <ClInclude Include="src\CamStudioNative.h" />
     <ClInclude Include="src\CamStudioSharedMemory.h" />
-    <ClInclude Include="src\WindowsVirtualCamera.h" />
+    <ClInclude Include="src\ClassFactory.h" />
+    <ClInclude Include="src\framework.h" />
+    <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\VirtualCameraMediaSource.h" />
+    <ClInclude Include="src\VirtualCameraMediaSourceActivate.h" />
+
     <ClInclude Include="src\VirtualCameraMediaStream.h" />
+    <ClInclude Include="src\WindowsVirtualCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
@@ -157,11 +161,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\CamStudioGuids.cpp" />
     <ClCompile Include="src\CamStudioNative.cpp" />
     <ClCompile Include="src\CamStudioSharedMemory.cpp" />
-    <ClCompile Include="src\WindowsVirtualCamera.cpp" />
+    <ClCompile Include="src\ClassFactory.cpp" />
     <ClCompile Include="src\VirtualCameraMediaSource.cpp" />
+    <ClCompile Include="src\VirtualCameraMediaSourceActivate.cpp" />
     <ClCompile Include="src\VirtualCameraMediaStream.cpp" />
+    <ClCompile Include="src\WindowsVirtualCamera.cpp" />
+
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

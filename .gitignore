@@ -67,5 +67,5 @@ ffmpeg*.log
 ############################
 # FFmpeg
 ############################
-CamStudio/ffmpeg/bin/*
+CamStudio/ffmpeg/**/bin/*
 !CamStudio/ffmpeg/instructions.txt
