@@ -76,39 +76,65 @@ bool WindowsVirtualCamera::Initialize(int width, int height, int fps)
         return false;
     }
 
-    printf("Virtual camera object created!\n");
+    printf("\n========================================\n");
+    printf("Starting IMFVirtualCamera\n");
+    printf("========================================\n");
 
-    printf("Calling IMFVirtualCamera::Start...\n");
+    SetLastError(ERROR_SUCCESS);
 
-    hr = m_virtualCamera->Start(nullptr);
+    printf("[1] Calling m_virtualCamera->Start(nullptr)...\n");
+    fflush(stdout);
 
-    printf("Start -> 0x%08X\n", (unsigned int)hr);
+    HRESULT hr = m_virtualCamera->Start(nullptr);
 
-    if (FAILED(hr))
+    DWORD lastError = GetLastError();
+
+    printf("[2] Start returned\n");
+    printf("    HRESULT       = 0x%08X\n", (unsigned int)hr);
+    printf("    HRESULT_CODE  = 0x%08X\n", (unsigned int)HRESULT_CODE(hr));
+    printf("    GetLastError  = %lu (0x%08lX)\n",
+        (unsigned long)lastError,
+        (unsigned long)lastError);
+
+    if (SUCCEEDED(hr))
     {
-        DWORD error = HRESULT_CODE(hr);
+        printf("[3] SUCCESS - Virtual camera started\n");
+        fflush(stdout);
+    }
+    else
+    {
+        printf("[3] FAILURE\n");
 
+        // Decodificar HRESULT
         LPSTR message = nullptr;
 
-        FormatMessageA(
+        DWORD length = FormatMessageA(
             FORMAT_MESSAGE_ALLOCATE_BUFFER |
             FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
             nullptr,
-            error,
-            0,
+            HRESULT_CODE(hr),
+            MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
             (LPSTR)&message,
             0,
             nullptr
         );
 
-        if (message != nullptr)
+        if (length > 0 && message != nullptr)
         {
-            printf("Windows error: %s\n", message);
+            printf("    Windows message: %s", message);
             LocalFree(message);
         }
+        else
+        {
+            printf("    FormatMessage could not decode error\n");
+        }
 
-        printf("ERROR: Start failed\n");
+        printf("\n");
+        printf("    This means Start() failed BEFORE our DllGetClassObject.\n");
+        printf("    Our COM provider was not reached.\n");
+
+        fflush(stdout);
 
         m_virtualCamera->Release();
         m_virtualCamera = nullptr;
