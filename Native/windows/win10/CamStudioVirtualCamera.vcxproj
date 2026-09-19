@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A2F67A40-54A3-4C30-9F62-8D3D4A1B7C91}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>CamStudioVirtualCamera</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)dist\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <TargetName>CamStudioVirtualCamera</TargetName>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+
+    <ClCompile>
+
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+
+      <AdditionalIncludeDirectories>
+        $(ProjectDir)src;
+        $(ProjectDir)directshow\baseclasses;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+
+      <PreprocessorDefinitions>
+        WIN32;
+        UNICODE;
+        _UNICODE;
+        CAMSTUDIOVIRTUALCAMERA_EXPORTS;
+        _WINDOWS;
+        _USRDLL;
+        _DEBUG;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+
+    </ClCompile>
+
+    <Link>
+
+      <ModuleDefinitionFile>CamStudioVirtualCamera.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>
+        $(ProjectDir)directshow\baseclasses\x64\Debug;
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+
+      <AdditionalDependencies>
+        strmbasd.lib;
+        strmiids.lib;
+        winmm.lib;
+        kernel32.lib;
+        user32.lib;
+        gdi32.lib;
+        winspool.lib;
+        shell32.lib;
+        ole32.lib;
+        oleaut32.lib;
+        uuid.lib;
+        comdlg32.lib;
+        advapi32.lib;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+
+      <LinkIncremental>false</LinkIncremental>
+
+    </Link>
+
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+
+    <ClCompile>
+
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+
+      <AdditionalIncludeDirectories>
+        $(ProjectDir)src;
+        $(ProjectDir)directshow\baseclasses;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+
+      <PreprocessorDefinitions>
+        WIN32;
+        UNICODE;
+        _UNICODE;
+        CAMSTUDIOVIRTUALCAMERA_EXPORTS;
+        _WINDOWS;
+        _USRDLL;
+        NDEBUG;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+
+    </ClCompile>
+
+    <Link>
+
+      <ModuleDefinitionFile>CamStudioVirtualCamera.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>
+        $(ProjectDir)directshow\baseclasses\x64\Release;
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+
+      <AdditionalDependencies>
+        strmbase.lib;
+        strmiids.lib;
+        winmm.lib;
+        kernel32.lib;
+        user32.lib;
+        gdi32.lib;
+        winspool.lib;
+        shell32.lib;
+        ole32.lib;
+        oleaut32.lib;
+        uuid.lib;
+        comdlg32.lib;
+        advapi32.lib;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+
+      <LinkIncremental>false</LinkIncremental>
+
+    </Link>
+
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+
+    <ClCompile Include="src\DllMain.cpp"/>
+    <ClCompile Include="src\CamStudioNative.cpp"/>
+    <ClCompile Include="src\CamStudioSharedMemory.cpp"/>
+    <ClCompile Include="src\Windows10VirtualCamera.cpp"/>
+
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ClInclude Include="src\framework.h"/>
+    <ClInclude Include="src\CamStudioNative.h"/>
+    <ClInclude Include="src\CamStudioSharedMemory.h"/>
+    <ClInclude Include="src\Windows10VirtualCamera.h"/>
+
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <None Include="CamStudioVirtualCamera.def"/>
+
+  </ItemGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+
+</Project>

@@ -57,7 +57,7 @@ bool WindowsVirtualCamera::Initialize(int width, int height, int fps)
 
     hr = MFCreateVirtualCamera(
         MFVirtualCameraType_SoftwareCameraSource,
-        MFVirtualCameraLifetime_System,
+        MFVirtualCameraLifetime_Session,
         MFVirtualCameraAccess_CurrentUser,
         L"Cam Studio Virtual Camera",
         L"{7D8F6B31-4F53-4C5B-9123-7A5E44912011}",
@@ -85,7 +85,7 @@ bool WindowsVirtualCamera::Initialize(int width, int height, int fps)
     printf("[1] Calling m_virtualCamera->Start(nullptr)...\n");
     fflush(stdout);
 
-    HRESULT hr = m_virtualCamera->Start(nullptr);
+    hr = m_virtualCamera->Start(nullptr);
 
     DWORD lastError = GetLastError();
 

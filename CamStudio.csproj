@@ -26,9 +26,14 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-		<None Include="ffmpeg\windows\arch-x64\bin\*.dll"
-			  CopyToOutputDirectory="PreserveNewest" 
-			  />
+		<None Include="ffmpeg\windows\arch-x64\bin\*.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <None Remove="Native\windows\win10\dist\Release\CamStudioVirtualCamera.dll" />
+	  <None Remove="Native\windows\win11\CamStudioVirtualCameraW11\x64\Release\CamStudioVirtualCameraW11.dll" />
 	</ItemGroup>
 
 	<!--<ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
@@ -38,16 +43,24 @@
 
 	<!-- Win10 -->
 	<ItemGroup>
-		<None Include="Native\windows\win10\dist\$(Configuration)\CamStudioVirtualCamera.dll"
-			  Link="CamStudioVirtualCamera.dll"
-			  CopyToOutputDirectory="PreserveNewest" />
+		<None Include="Native\windows\win10\CamStudioVirtualCamera.sln" />
+		<None Include="Native\windows\win10\dist\$(Configuration)\CamStudioVirtualCamera.dll" Link="CamStudioVirtualCamera.dll" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Native\windows\win10\dist\Release\CamStudioVirtualCamera.dll" />
+	  <None Remove="Native\windows\win11\CamStudioVirtualCameraW11\x64\Release\CamStudioVirtualCameraW11.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Native\windows\win10\dist\$(Configuration)\CamStudioVirtualCamera.dll" Link="CamStudioVirtualCamera.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
 
 	<!-- Win11 -->
 	<ItemGroup>
-		<None Include="Native\windows\win11\CamStudioVirtualCameraW11\x64\$(Configuration)\CamStudioVirtualCameraW11.dll"
-			  Link="CamStudioVirtualCameraW11.dll"
-			  CopyToOutputDirectory="PreserveNewest" />
+		<None Include="Native\windows\win11\CamStudioVirtualCameraW11\x64\$(Configuration)\CamStudioVirtualCameraW11.dll" Link="CamStudioVirtualCameraW11.dll" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Native\windows\win10\dist\Release\" />
 	</ItemGroup>
 
 </Project>

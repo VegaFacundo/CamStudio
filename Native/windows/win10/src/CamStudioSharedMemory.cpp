@@ -7,24 +7,6 @@ static const wchar_t* SHARED_MEMORY_NAME =
 L"CamStudio_Source_0";
 
 
-static void SharedMemoryDebug(const char* text)
-{
-    FILE* file = nullptr;
-
-    fopen_s(
-        &file,
-        "camera_native_debug.txt",
-        "a"
-    );
-
-    if (file)
-    {
-        fprintf(file, "%s\n", text);
-        fclose(file);
-    }
-}
-
-
 CamStudioSharedMemory::CamStudioSharedMemory()
     : mappingHandle(nullptr),
     sharedMemory(nullptr),
@@ -57,17 +39,14 @@ bool CamStudioSharedMemory::CreateOrOpen(
     LONG height
 )
 {
-    SharedMemoryDebug("SHM: CreateOrOpen ENTER");
 
     if (width <= 0 || height <= 0)
     {
-        SharedMemoryDebug("SHM: INVALID SIZE");
         return false;
     }
 
     if (sharedMemory != nullptr)
     {
-        SharedMemoryDebug("SHM: ALREADY OPEN");
         return true;
     }
 
@@ -87,7 +66,6 @@ bool CamStudioSharedMemory::CreateOrOpen(
         frameSize
     );
 
-    SharedMemoryDebug(log);
 
     SetLastError(ERROR_SUCCESS);
 
@@ -115,7 +93,6 @@ bool CamStudioSharedMemory::CreateOrOpen(
             error
         );
 
-        SharedMemoryDebug(log);
 
         return false;
     }
@@ -126,16 +103,12 @@ bool CamStudioSharedMemory::CreateOrOpen(
     if (createError == ERROR_ALREADY_EXISTS)
     {
         owner = false;
-        SharedMemoryDebug(
-            "SHM: MAPPING ALREADY EXISTS"
-        );
+       
     }
     else
     {
         owner = true;
-        SharedMemoryDebug(
-            "SHM: MAPPING CREATED"
-        );
+       
     }
 
 
@@ -160,8 +133,6 @@ bool CamStudioSharedMemory::CreateOrOpen(
             error
         );
 
-        SharedMemoryDebug(log);
-
         CloseHandle(mappingHandle);
         mappingHandle = nullptr;
 
@@ -175,7 +146,6 @@ bool CamStudioSharedMemory::CreateOrOpen(
         static_cast<void*>(sharedMemory)
     );
 
-    SharedMemoryDebug(log);
 
     return true;
 }
@@ -188,27 +158,20 @@ bool CamStudioSharedMemory::WriteFrame(
 {
     if (sharedMemory == nullptr)
     {
-        SharedMemoryDebug(
-            "SHM: WriteFrame FAILED - no mapping"
-        );
+        
 
         return false;
     }
 
     if (data == nullptr)
     {
-        SharedMemoryDebug(
-            "SHM: WriteFrame FAILED - data NULL"
-        );
 
         return false;
     }
 
     if (size != frameSize)
     {
-        SharedMemoryDebug(
-            "SHM: WriteFrame FAILED - invalid size"
-        );
+        
 
         return false;
     }
@@ -270,11 +233,9 @@ bool CamStudioSharedMemory::Open(
     LONG height
 )
 {
-    SharedMemoryDebug("SHM: Open ENTER");
 
     if (width <= 0 || height <= 0)
     {
-        SharedMemoryDebug("SHM: INVALID SIZE");
         return false;
     }
 
@@ -286,7 +247,6 @@ bool CamStudioSharedMemory::Open(
         static_cast<size_t>(height) *
         3;
 
-    SharedMemoryDebug("SHM: calling OpenFileMapping");
 
     mappingHandle =
         OpenFileMappingW(
@@ -307,12 +267,10 @@ bool CamStudioSharedMemory::Open(
             error
         );
 
-        SharedMemoryDebug(buffer);
 
         return false;
     }
 
-    SharedMemoryDebug("SHM: OpenFileMapping OK");
 
     sharedMemory =
         static_cast<BYTE*>(
@@ -337,7 +295,6 @@ bool CamStudioSharedMemory::Open(
             error
         );
 
-        SharedMemoryDebug(buffer);
 
         CloseHandle(mappingHandle);
         mappingHandle = nullptr;
@@ -353,7 +310,6 @@ bool CamStudioSharedMemory::Open(
         static_cast<void*>(sharedMemory)
     );
 
-    SharedMemoryDebug(buffer);
 
     return true;
 }
